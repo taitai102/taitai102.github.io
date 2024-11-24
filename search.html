@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検索ページ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        h2 {
+            color: #555;
+            margin-top: 40px;
+        }
+
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="number"], textarea {
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #clock, #calendar, #result {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+
+        #calculator, #memo {
+            margin: 20px 0;
+        }
+
+        #toc {
+            margin-bottom: 20px;
+            text-align: left;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #toc h2 {
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+
+        #toc a {
+            display: block;
+            margin: 5px 0;
+            text-decoration: none;
+            color: #007bff;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #toc a:hover {
+            background-color: #e0f0ff;
+            color: #0056b3;
+        }
+
+        #scrollToTop {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            transition: background-color 0.3s;
+        }
+
+        #scrollToTop:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>検索ページ</h1>
+
+    <div id="toc">
+        <h2>目次</h2>
+        <a href="#clock">時計</a>
+        <a href="#calendar">カレンダー</a>
+        <a href="#google-search">Google検索</a>
+        <a href="#bing-search">Bing検索</a>
+        <a href="#scratch-search">Scratch検索</a>
+        <a href="#youtube-search">YouTube検索</a>
+        <a href="#calculator">電卓</a>
+        <a href="#memo">メモ</a>
+    </div>
+
+    <div id="clock"></div>
+    <div id="calendar"></div>
+
+    <h2 id="google-search">Google検索</h2>
+    <form action="https://www.google.com/search" method="get" target="_blank">
+        <input type="text" name="q" placeholder="検索キーワードを入力" required>
+        <button type="submit">Googleで検索</button>
+    </form>
+
+    <h2 id="bing-search">Bing検索</h2>
+    <form action="https://www.bing.com/search" method="get" target="_blank">
+        <input type="text" name="q" placeholder="検索キーワードを入力" required>
+        <button type="submit">Bingで検索</button>
+    </form>
+
+    <h2 id="scratch-search">Scratch検索</h2>
+    <form action="https://scratch.mit.edu/search/projects" method="get" target="_blank">
+        <input type="text" name="q" placeholder="プロジェクト名を入力" required>
+        <button type="submit">Scratchで検索</button>
+    </form>
+
+    <h2 id="youtube-search">YouTube検索</h2>
+    <form action="https://www.youtube.com/results" method="get" target="_blank">
+        <input type="text" name="search_query" placeholder="検索キーワードを入力" required>
+        <button type="submit">YouTubeで検索</button>
+    </form>
+
+    <div id="calculator">
+        <h2>電卓</h2>
+        <input type="number" id="num1" placeholder="数値1" required>
+        <input type="number" id="num2" placeholder="数値2" required>
+        <select id="operation">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">×</option>
+            <option value="/">÷</option>
+        </select>
+        <button onclick="calculate()">計算</button>
+        <div id="result"></div>
+    </div>
+
+    <div id="memo">
+        <h2>メモ</h2>
+        <textarea rows="5" placeholder="メモを入力..." id="memoInput"></textarea>
+        <br>
+        <button onclick="saveMemo()">保存</button>
+        <div id="memoOutput"></div>
+    </div>
+
+    <button id="scrollToTop" onclick="scrollToTop()">↑</button>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            document.getElementById('clock').innerHTML = now.toLocaleTimeString('ja-JP', options);
+        }
+
+        function updateCalendar() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('calendar').innerHTML = now.toLocaleDateString('ja-JP', options);
+        }
+
+        function calculate() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const operation = document.getElementById('operation').value;
+            let result;
+
+            switch (operation) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    result = num2 !== 0 ? num1 / num2 : 'エラー';
+                    break;
+                default:
+                    result = '不明な操作';
+            }
+
+            document.getElementById('result').innerHTML = `結果: ${result}`;
+        }
+
+        function saveMemo() {
+            const memoText = document.getElementById('memoInput').value;
+            document.getElementById('memoOutput').innerHTML = `<strong>保存されたメモ:</strong> <br>${memoText}`;
+            document.getElementById('memoInput').value = ''; // 入力欄をクリア
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function smoothScroll(target) {
+            const element = document.querySelector(target);
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 目次のリンクをクリックしたときのイベントを追加
+        document.querySelectorAll('#toc a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                smoothScroll(this.getAttribute('href'));
+            });
+        });
+
+        window.onscroll = function() {
+            const button = document.getElementById('scrollToTop');
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                button.style.display = "flex"; // 表示
+            } else {
+                button.style.display = "none"; // 非表示
+            }
+        };
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        updateCalendar();
+    </script>
+</body>
+</html>
